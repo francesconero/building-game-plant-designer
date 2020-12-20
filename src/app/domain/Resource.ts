@@ -1,4 +1,3 @@
-
 export const resourceTypes = ["solid", "liquid"] as const;
 export type ResourceType = typeof resourceTypes[number];
 

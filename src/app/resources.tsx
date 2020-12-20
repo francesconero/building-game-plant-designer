@@ -13,18 +13,28 @@ import {
   EditButton,
   SelectInput,
   required,
+  FilterProps,
+  Filter,
+  SearchInput,
 } from "react-admin";
 import { ColorField, ColorInput } from "react-admin-color-input";
 import _ from "lodash";
-import { Resource, ResourceType, resourceTypes } from "./models/resource";
+import { DryResource } from "./persistence/DryResource";
+import { ResourceType, resourceTypes } from "./domain/Resource";
 
 export const resourceTypeChoices = resourceTypes.map((t) => ({
   id: t,
   name: t,
 }));
 
+const ResourceFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
+  <Filter {...props}>
+    <SearchInput source="q" alwaysOn />
+  </Filter>
+);
+
 export const ResourceList: React.FC<ListProps> = (props) => (
-  <List {...props}>
+  <List {...props} filters={<ResourceFilter />}>
     <Datagrid>
       <TextField source="id" />
       <TextField source="name" />
@@ -36,7 +46,7 @@ export const ResourceList: React.FC<ListProps> = (props) => (
 );
 
 interface ResourceTitleProps {
-  record?: Resource<ResourceType>;
+  record?: DryResource<ResourceType>;
 }
 
 const ResourceTitle: React.FC<ResourceTitleProps> = ({ record }) =>

@@ -1,6 +1,6 @@
-import { Building } from "./app/models/building";
-import { Recipe, ResourceFlow } from "./app/models/recipe";
-import { Resource } from "./app/models/resource";
+import { Building } from "./app/domain/Building";
+import { Recipe, ResourceFlow } from "./app/domain/Recipe";
+import { Resource } from "./app/domain/Resource";
 
 export {};
 

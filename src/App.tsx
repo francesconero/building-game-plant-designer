@@ -3,7 +3,7 @@ import { Admin, Resource } from "react-admin";
 import localStorageDataProvider from "ra-data-local-storage";
 import { ResourceList, ResourceCreate, ResourceEdit } from "./app/resources";
 import { BuildingList, BuildingCreate, BuildingEdit } from "./app/buildings";
-import { RecipeCreate, RecipeList } from "./app/recipes";
+import { RecipeCreate, RecipeEdit, RecipeList } from "./app/recipes";
 
 const dataProvider = localStorageDataProvider({
   defaultData: {},
@@ -26,7 +26,12 @@ const App = () => (
       create={BuildingCreate}
       edit={BuildingEdit}
     />
-    <Resource name="recipes" list={RecipeList} create={RecipeCreate} />
+    <Resource
+      name="recipes"
+      list={RecipeList}
+      create={RecipeCreate}
+      edit={RecipeEdit}
+    />
   </Admin>
 );
 

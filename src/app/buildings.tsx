@@ -17,15 +17,24 @@ import {
   SimpleFormIterator,
   SelectInput,
   required,
+  FilterProps,
+  Filter,
+  SearchInput,
 } from "react-admin";
 import _ from "lodash";
-import { Building } from "./models/building";
-import { ResourceType } from "./models/resource";
+import { DryBuilding } from "./persistence/DryBuilding";
+import { ResourceType } from "./domain/Resource";
 import { Tuple } from "../utils/tuples";
 import { resourceTypeChoices } from "./resources";
 
+const BuildingFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
+  <Filter {...props}>
+    <SearchInput source="q" alwaysOn />
+  </Filter>
+);
+
 export const BuildingList: React.FC<ListProps> = (props) => (
-  <List {...props}>
+  <List {...props} filters={<BuildingFilter />}>
     <Datagrid>
       <TextField source="id" />
       <TextField source="name" />
@@ -35,11 +44,14 @@ export const BuildingList: React.FC<ListProps> = (props) => (
   </List>
 );
 
-interface BuildingTitleProps {
-  record?: Building<Tuple<ResourceType, number>, Tuple<ResourceType, number>>;
+interface DryBuildingTitleProps {
+  record?: DryBuilding<
+    Tuple<ResourceType, number>,
+    Tuple<ResourceType, number>
+  >;
 }
 
-const BuildingTitle: React.FC<BuildingTitleProps> = ({ record }) =>
+const BuildingTitle: React.FC<DryBuildingTitleProps> = ({ record }) =>
   record ? (
     <span>
       Building #{record.id} - {record.name}
