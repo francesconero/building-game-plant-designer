@@ -1,6 +1,5 @@
 import { Tuple } from "../../utils/tuples";
 import { ResourceType } from "./resource";
-import { FreezeDry } from "./utils";
 
 export class Building<
   INPUTS extends Tuple<ResourceType, number>,
