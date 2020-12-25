@@ -181,7 +181,6 @@ const GraphField: React.FC<FieldProps> = () => {
       >
         <Canvas
           fit={true}
-          pannable={false}
           nodes={graph.nodes}
           edges={graph.edges}
           node={(node: NodeProps) => (
