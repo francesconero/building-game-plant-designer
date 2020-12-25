@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/building-game-plant-designer/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/building-game-plant-designer/static/js/main.a4e82a80.chunk.js",
-    "main.js.map": "/building-game-plant-designer/static/js/main.a4e82a80.chunk.js.map",
+    "main.js": "/building-game-plant-designer/static/js/main.6285d862.chunk.js",
+    "main.js.map": "/building-game-plant-designer/static/js/main.6285d862.chunk.js.map",
     "runtime-main.js": "/building-game-plant-designer/static/js/runtime-main.6b82ae04.js",
     "runtime-main.js.map": "/building-game-plant-designer/static/js/runtime-main.6b82ae04.js.map",
     "static/css/2.890c5614.chunk.css": "/building-game-plant-designer/static/css/2.890c5614.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.890c5614.chunk.css",
     "static/js/2.57699237.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.a4e82a80.chunk.js"
+    "static/js/main.6285d862.chunk.js"
   ]
 }
