@@ -1,6 +1,6 @@
 import { ResourceType } from "../domain/Resource";
 
-export class DryResource<T extends ResourceType> {
+export class DryResource<T extends ResourceType = ResourceType> {
   constructor(
     readonly id: string,
     readonly name: string,
