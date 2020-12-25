@@ -35,10 +35,11 @@ import { ResourceType } from "./domain/Resource";
 import { DryRecipe } from "./persistence/DryRecipe";
 
 import { Filter, SearchInput } from "react-admin";
-import { Canvas, EdgeData, NodeData } from "reaflow";
+import { Canvas, EdgeData, Label, Node, NodeData, NodeProps } from "reaflow";
 import { DryBuilding } from "./persistence/DryBuilding";
 import { DryResource } from "./persistence/DryResource";
 import { useFormState } from "react-final-form";
+import invert from "invert-color";
 
 const RecipeFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
   <Filter {...props}>
@@ -128,10 +129,16 @@ const GraphField: React.FC<FieldProps> = () => {
             const inputNodes: NodeData[] = inputResources.map((resource) => ({
               id: `input_${resource.id}`,
               text: resource.name,
+              data: {
+                color: resource.color,
+              },
             }));
             const outputNodes: NodeData[] = outputResources.map((resource) => ({
               id: `output_${resource.id}`,
               text: resource.name,
+              data: {
+                color: resource.color,
+              },
             }));
             const inputEdges: EdgeData[] = inputNodes.map((inputNode) => ({
               id: `${inputNode.id}->${buildingNode.id}`,
@@ -177,6 +184,24 @@ const GraphField: React.FC<FieldProps> = () => {
           pannable={false}
           nodes={graph.nodes}
           edges={graph.edges}
+          node={(node: NodeProps) => (
+            <Node
+              {...node}
+              style={{
+                fill: node.properties.data?.color || "#123456",
+              }}
+              label={
+                <Label
+                  style={{
+                    fill: invert(
+                      node.properties.data?.color || "#123456",
+                      true
+                    ),
+                  }}
+                ></Label>
+              }
+            ></Node>
+          )}
         />
       </div>
     </div>
