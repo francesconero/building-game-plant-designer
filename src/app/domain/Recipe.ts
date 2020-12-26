@@ -1,7 +1,9 @@
 import { Building } from "./Building";
 import { Resource, ResourceType } from "./Resource";
 
-export class ResourceFlow<T extends Resource<ResourceType>> {
+export class ResourceFlow<
+  T extends Resource<ResourceType> = Resource<ResourceType>
+> {
   constructor(readonly resource: T, readonly flowRate: number) {}
 }
 

@@ -1,7 +1,7 @@
 import { FLOWS } from "../domain/Recipe";
 import { ResourceType } from "../domain/Resource";
 
-export class DryResourceFlow<T extends ResourceType> {
+export class DryResourceFlow<T extends ResourceType = ResourceType> {
   constructor(
     readonly resource: string,
     readonly resourceType: T,

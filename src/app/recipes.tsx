@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useFormState } from "react-final-form";
 import {
   List,
   Datagrid,
@@ -24,10 +24,6 @@ import {
   FilterProps,
   TabbedForm,
   FormTab,
-  Loading,
-  Error,
-  useDataProvider,
-  FieldProps,
 } from "react-admin";
 import _ from "lodash";
 import { Tuple } from "../utils/tuples";
@@ -35,11 +31,7 @@ import { ResourceType } from "./domain/Resource";
 import { DryRecipe } from "./persistence/DryRecipe";
 
 import { Filter, SearchInput } from "react-admin";
-import { Canvas, EdgeData, Label, Node, NodeData, NodeProps } from "reaflow";
-import { DryBuilding } from "./persistence/DryBuilding";
-import { DryResource } from "./persistence/DryResource";
-import { useFormState } from "react-final-form";
-import invert from "invert-color";
+import RecipeGraph from "./view/recipe/RecipeGraph";
 
 const RecipeFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
   <Filter {...props}>
@@ -89,122 +81,9 @@ const RecipeTitle: React.FC<RecipeTitleProps> = ({ record }) =>
     </span>
   ) : null;
 
-class Graph {
-  constructor(readonly nodes: NodeData[], readonly edges: EdgeData[]) {}
-}
-
-const GraphField: React.FC<FieldProps> = () => {
-  const dataProvider = useDataProvider();
+const GraphField = () => {
   const dryRecipe = useFormState().values as DryRecipe | undefined;
-  const [graph, setGraph] = useState<Graph>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>();
-  useEffect(() => {
-    if (dryRecipe) {
-      Promise.all([
-        dataProvider.getOne<DryBuilding>("buildings", {
-          id: dryRecipe.building,
-        }),
-        dataProvider.getMany<DryResource>("resources", {
-          ids: dryRecipe.inputs
-            .filter(_.negate(_.isNil))
-            .map((input) => input.resource),
-        }),
-        dataProvider.getMany<DryResource>("resources", {
-          ids: dryRecipe.outputs
-            .filter(_.negate(_.isNil))
-            .map((output) => output.resource),
-        }),
-      ])
-        .then(
-          ([
-            { data: dryBuilding },
-            { data: inputResources },
-            { data: outputResources },
-          ]) => {
-            const buildingNode: NodeData = {
-              id: `building_${dryBuilding.id}`,
-              text: dryBuilding.name,
-            };
-            const inputNodes: NodeData[] = inputResources.map((resource) => ({
-              id: `input_${resource.id}`,
-              text: resource.name,
-              data: {
-                color: resource.color,
-              },
-            }));
-            const outputNodes: NodeData[] = outputResources.map((resource) => ({
-              id: `output_${resource.id}`,
-              text: resource.name,
-              data: {
-                color: resource.color,
-              },
-            }));
-            const inputEdges: EdgeData[] = inputNodes.map((inputNode) => ({
-              id: `${inputNode.id}->${buildingNode.id}`,
-              from: inputNode.id,
-              to: buildingNode.id,
-            }));
-            const outputEdges: EdgeData[] = outputNodes.map((outputNode) => ({
-              id: `${buildingNode.id}->${outputNode.id}`,
-              from: buildingNode.id,
-              to: outputNode.id,
-            }));
-            const newGraph = new Graph(
-              [buildingNode, ...inputNodes, ...outputNodes],
-              [...inputEdges, ...outputEdges]
-            );
-            setGraph(newGraph);
-            setLoading(false);
-          }
-        )
-        .catch((error) => {
-          setError(error);
-          setLoading(false);
-        });
-    }
-  }, [dataProvider, dryRecipe]);
-
-  if (loading) return <Loading />;
-  if (error) return <Error error={error} />;
-  if (!graph) return null;
-  return (
-    <div style={{ position: "relative", height: 500, width: "100%" }}>
-      <div
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 0,
-        }}
-      >
-        <Canvas
-          fit={true}
-          nodes={graph.nodes}
-          edges={graph.edges}
-          node={(node: NodeProps) => (
-            <Node
-              {...node}
-              style={{
-                fill: node.properties.data?.color || "#123456",
-              }}
-              label={
-                <Label
-                  style={{
-                    fill: invert(
-                      node.properties.data?.color || "#123456",
-                      true
-                    ),
-                  }}
-                ></Label>
-              }
-            ></Node>
-          )}
-        />
-      </div>
-    </div>
-  );
+  return <RecipeGraph dryRecipe={dryRecipe} />;
 };
 
 export const RecipeEdit: React.FC<EditProps> = (props) => {
