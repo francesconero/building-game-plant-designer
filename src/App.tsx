@@ -1,11 +1,12 @@
 import * as React from "react";
 import { Admin, Resource } from "react-admin";
-import localStorageDataProvider from "ra-data-local-storage";
+import localStorageDataProviderExtended from "./app/localStorageDataProviderExtended";
 import { ResourceList, ResourceCreate, ResourceEdit } from "./app/resources";
 import { BuildingList, BuildingCreate, BuildingEdit } from "./app/buildings";
 import { RecipeCreate, RecipeEdit, RecipeList } from "./app/recipes";
+import Dashboard from "./app/Dashboard";
 
-const dataProvider = localStorageDataProvider({
+const dataProvider = localStorageDataProviderExtended({
   defaultData: {},
   localStorageKey: "plantDesigner",
   localStorageUpdateDelay: 0,
@@ -13,7 +14,7 @@ const dataProvider = localStorageDataProvider({
 });
 
 const App = () => (
-  <Admin dataProvider={dataProvider}>
+  <Admin dataProvider={dataProvider} dashboard={Dashboard}>
     <Resource
       name="resources"
       list={ResourceList}
