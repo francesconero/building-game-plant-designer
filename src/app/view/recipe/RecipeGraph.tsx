@@ -6,7 +6,6 @@ import ReactFlow, {
   Controls,
   Background,
   BackgroundVariant,
-  OnLoadParams,
   ArrowHeadType,
   useZoomPanHelper,
   ReactFlowProvider,
@@ -19,6 +18,15 @@ import invert from "invert-color";
 import { ResourceFlow } from "../../domain/Recipe";
 import { Resource } from "../../domain/Resource";
 import { getLayoutedElements } from "../graph/layout";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStylesLoading = makeStyles({
+  container: {
+    height: "auto",
+    marginTop: 0,
+    flex: 1,
+  },
+});
 
 function hydrateFlow(dryFlow: DryResourceFlow, resources: Resource[]) {
   const hydratedResource = resources.find(
@@ -63,11 +71,11 @@ export class Graph {
 const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
   dryRecipe,
 }) => {
+  const loadingClasses = useStylesLoading();
   const dataProvider = useDataProvider();
   const [graph, setGraph] = useState<Graph>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
-  const [graphInstance, setGraphInstance] = useState<OnLoadParams>();
   const { fitView } = useZoomPanHelper();
   useEffect(() => {
     if (dryRecipe) {
@@ -132,9 +140,6 @@ const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
             );
             setGraph(newGraph);
             setLoading(false);
-            if (graphInstance) {
-              fitView();
-            }
           }
         )
         .catch((error) => {
@@ -142,29 +147,24 @@ const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
           setLoading(false);
         });
     }
-  }, [dataProvider, dryRecipe, graphInstance, fitView]);
+  }, [dataProvider, dryRecipe, fitView]);
 
-  if (loading) return <Loading />;
+  if (loading) return <Loading classes={loadingClasses} />;
   if (error) return <TSXError error={error} />;
   if (!graph) return null;
   return (
-    <div style={{ position: "relative", height: 500, width: "100%" }}>
-      <ReactFlow
-        maxZoom={3}
-        onLoad={(instance) => {
-          fitView();
-          setGraphInstance(instance);
-        }}
-        snapToGrid={true}
-        nodesConnectable={false}
-        nodesDraggable={false}
-        elementsSelectable={false}
-        elements={graph.getLayoutedElements()}
-      >
-        <Controls showInteractive={false} />
-        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-      </ReactFlow>
-    </div>
+    <ReactFlow
+      maxZoom={10}
+      onLoad={() => fitView()}
+      snapToGrid={true}
+      nodesConnectable={false}
+      nodesDraggable={false}
+      elementsSelectable={false}
+      elements={graph.getLayoutedElements()}
+    >
+      <Controls showInteractive={false} />
+      <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+    </ReactFlow>
   );
 };
 
