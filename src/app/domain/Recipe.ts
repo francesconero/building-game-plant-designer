@@ -1,3 +1,4 @@
+import { Tuple } from "../../utils/tuples";
 import { Building } from "./Building";
 import { Resource, ResourceType } from "./Resource";
 
@@ -7,7 +8,7 @@ export class ResourceFlow<
   constructor(readonly resource: T, readonly flowRate: number) {}
 }
 
-export type FLOWS = Array<ResourceType>;
+export type FLOWS = Tuple<ResourceType, number>;
 
 type RESOURCE_FLOWS<T extends FLOWS> = {
   [P in keyof T]: [T[P]] extends [ResourceType]
@@ -16,8 +17,8 @@ type RESOURCE_FLOWS<T extends FLOWS> = {
 };
 
 export class Recipe<
-  INPUTS extends FLOWS = FLOWS,
-  OUTPUTS extends FLOWS = FLOWS
+  INPUTS extends FLOWS = Array<ResourceType>,
+  OUTPUTS extends FLOWS = Array<ResourceType>
 > {
   constructor(
     readonly id: string,

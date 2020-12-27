@@ -1,10 +1,5 @@
-import { ResourceType } from "../domain/Resource";
+import { Resource, ResourceType } from "../domain/Resource";
 
-export class DryResource<T extends ResourceType = ResourceType> {
-  constructor(
-    readonly id: string,
-    readonly name: string,
-    readonly color: string,
-    readonly type: T
-  ) {}
-}
+export class DryResource<
+  T extends ResourceType = ResourceType
+> extends Resource<T> {}
