@@ -11,14 +11,14 @@ import ReactFlow, {
   ReactFlowProvider,
 } from "react-flow-renderer";
 import { DryBuilding } from "../../persistence/DryBuilding";
-import { DryRecipe, DryResourceFlow } from "../../persistence/DryRecipe";
+import { DryRecipe } from "../../persistence/DryRecipe";
 import { DryResource } from "../../persistence/DryResource";
 import _ from "lodash";
-import invert from "invert-color";
 import { ResourceFlow } from "../../domain/Recipe";
-import { Resource } from "../../domain/Resource";
-import { getLayoutedElements } from "../graph/layout";
 import { makeStyles } from "@material-ui/core/styles";
+import { Graph } from "../graph/Graph";
+import { flowToNode } from "../graph/flowToNode";
+import { hydrateFlow } from "./hydrateFlow";
 
 const useStylesLoading = makeStyles({
   container: {
@@ -27,46 +27,6 @@ const useStylesLoading = makeStyles({
     flex: 1,
   },
 });
-
-function hydrateFlow(dryFlow: DryResourceFlow, resources: Resource[]) {
-  const hydratedResource = resources.find(
-    (resource) => resource.id === dryFlow.resource
-  );
-  if (!hydratedResource) {
-    throw new Error(`missing resource ${dryFlow.resource}`);
-  }
-  return {
-    ...dryFlow,
-    resource: hydratedResource,
-  };
-}
-
-function flowToNode(type: string) {
-  return (flow: ResourceFlow) => {
-    const node: Node = {
-      id: `input_${flow.resource.id}`,
-      data: { label: flow.resource.name, flow: flow },
-      position: {
-        x: 0,
-        y: 0,
-      },
-      type: type,
-      style: {
-        backgroundColor: flow.resource.color,
-        borderColor: invert(flow.resource.color),
-        color: invert(flow.resource.color, true),
-      },
-    };
-    return node;
-  };
-}
-
-export class Graph {
-  constructor(readonly nodes: Node[], readonly edges: Edge[]) {}
-  getLayoutedElements() {
-    return getLayoutedElements([...this.nodes, ...this.edges]);
-  }
-}
 
 const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
   dryRecipe,

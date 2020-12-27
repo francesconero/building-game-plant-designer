@@ -27,8 +27,6 @@ import {
   FieldProps,
 } from "react-admin";
 import _ from "lodash";
-import { Tuple } from "../utils/tuples";
-import { ResourceType } from "./domain/Resource";
 import { DryRecipe } from "./persistence/DryRecipe";
 import { useLocation } from "react-router-dom";
 
@@ -75,7 +73,7 @@ export const RecipeList: React.FC<ListProps> = (props) => (
 );
 
 interface RecipeTitleProps {
-  record?: DryRecipe<Tuple<ResourceType, number>, Tuple<ResourceType, number>>;
+  record?: DryRecipe;
 }
 
 const RecipeTitle: React.FC<RecipeTitleProps> = ({ record }) =>
