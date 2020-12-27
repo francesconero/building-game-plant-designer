@@ -158,7 +158,7 @@ const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
       onLoad={() => fitView()}
       snapToGrid={true}
       nodesConnectable={false}
-      nodesDraggable={false}
+      nodesDraggable={true}
       elementsSelectable={false}
       elements={graph.getLayoutedElements()}
     >
