@@ -24,6 +24,7 @@ import {
   FilterProps,
   TabbedForm,
   FormTab,
+  TabbedFormTabs,
 } from "react-admin";
 import _ from "lodash";
 import { Tuple } from "../utils/tuples";
@@ -32,6 +33,7 @@ import { DryRecipe } from "./persistence/DryRecipe";
 
 import { Filter, SearchInput } from "react-admin";
 import RecipeGraph from "./view/recipe/RecipeGraph";
+import { ChangeEvent, useState } from "react";
 
 const RecipeFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
   <Filter {...props}>
@@ -87,6 +89,14 @@ const GraphField = () => {
 };
 
 export const RecipeEdit: React.FC<EditProps> = (props) => {
+  const [activeTab, setActiveTab] = useState<string>();
+  const onChange: (event: any, value?: any) => void = (event, value) => {
+    if (typeof value === "string") {
+      const parts = value.split("/");
+      const tab = parts[parts.length - 1];
+      setActiveTab(tab);
+    }
+  };
   return (
     <Edit
       title={<RecipeTitle />}
@@ -95,8 +105,8 @@ export const RecipeEdit: React.FC<EditProps> = (props) => {
         data.id ? data : { ...data, id: _.camelCase(data.name) }
       }
     >
-      <TabbedForm>
-        <FormTab label="Properties">
+      <TabbedForm tabs={<TabbedFormTabs onChange={onChange} />}>
+        <FormTab label="Properties" path="properties">
           <TextInput source="id" />
           <TextInput source="name" validate={required()} />
           <ArrayInput source="inputs" defaultValue={[]}>
@@ -134,8 +144,8 @@ export const RecipeEdit: React.FC<EditProps> = (props) => {
             <SelectInput optionText="name" />
           </ReferenceInput>
         </FormTab>
-        <FormTab label="Design">
-          <GraphField />
+        <FormTab label="Design" path="design">
+          {activeTab === "design" ? <GraphField /> : undefined}
         </FormTab>
       </TabbedForm>
     </Edit>

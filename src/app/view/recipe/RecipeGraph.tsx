@@ -8,6 +8,8 @@ import ReactFlow, {
   BackgroundVariant,
   OnLoadParams,
   ArrowHeadType,
+  useZoomPanHelper,
+  ReactFlowProvider,
 } from "react-flow-renderer";
 import { DryBuilding } from "../../persistence/DryBuilding";
 import { DryRecipe, DryResourceFlow } from "../../persistence/DryRecipe";
@@ -58,15 +60,15 @@ export class Graph {
   }
 }
 
-const onLoad = (reactFlowInstance: OnLoadParams) => {
-  reactFlowInstance.fitView();
-};
-
-const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => {
+const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
+  dryRecipe,
+}) => {
   const dataProvider = useDataProvider();
   const [graph, setGraph] = useState<Graph>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
+  const [graphInstance, setGraphInstance] = useState<OnLoadParams>();
+  const { fitView } = useZoomPanHelper();
   useEffect(() => {
     if (dryRecipe) {
       Promise.all([
@@ -130,6 +132,9 @@ const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => {
             );
             setGraph(newGraph);
             setLoading(false);
+            if (graphInstance) {
+              fitView();
+            }
           }
         )
         .catch((error) => {
@@ -137,7 +142,7 @@ const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => {
           setLoading(false);
         });
     }
-  }, [dataProvider, dryRecipe]);
+  }, [dataProvider, dryRecipe, graphInstance, fitView]);
 
   if (loading) return <Loading />;
   if (error) return <TSXError error={error} />;
@@ -146,7 +151,10 @@ const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => {
     <div style={{ position: "relative", height: 500, width: "100%" }}>
       <ReactFlow
         maxZoom={3}
-        onLoad={onLoad}
+        onLoad={(instance) => {
+          fitView();
+          setGraphInstance(instance);
+        }}
         snapToGrid={true}
         nodesConnectable={false}
         nodesDraggable={false}
@@ -159,5 +167,11 @@ const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => {
     </div>
   );
 };
+
+const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => (
+  <ReactFlowProvider>
+    <RecipeGraphInner dryRecipe={dryRecipe} />
+  </ReactFlowProvider>
+);
 
 export default RecipeGraph;

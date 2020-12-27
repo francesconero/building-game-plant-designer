@@ -25,10 +25,8 @@ export const getLayoutedElements = (
       const nodeWithPosition = dagreGraph.node(el.id);
       el.targetPosition = isHorizontal ? Position.Left : Position.Top;
       el.sourcePosition = isHorizontal ? Position.Right : Position.Bottom;
-      // unfortunately we need this little hack to pass a slighltiy different position
-      // in order to notify react flow about the change
       el.position = {
-        x: nodeWithPosition.x + Math.random() / 1000,
+        x: nodeWithPosition.x,
         y: nodeWithPosition.y,
       };
     }
