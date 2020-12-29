@@ -52,6 +52,8 @@ const Dashboard = () => {
           fakeLink.setAttribute("download", `${key}.json`);
           fakeLink.click();
         }
+      } else {
+        notify("Empty database");
       }
     });
   };

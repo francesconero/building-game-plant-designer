@@ -110,7 +110,7 @@ const localStorageDataProviderExtended = (
           },
         });
       } else {
-        return {};
+        return Promise.resolve({ data: {} });
       }
     },
   };
