@@ -22,6 +22,7 @@ import {
   FilterProps,
   TabbedForm,
   FormTab,
+  AutocompleteInput,
 } from "react-admin";
 import _ from "lodash";
 import { DryRecipe } from "./persistence/DryRecipe";
@@ -103,9 +104,13 @@ export const RecipeEdit: React.FC<EditProps> = (props) => {
                 reference="resources"
                 validate={required()}
               >
-                <SelectInput optionText="name" />
+                <AutocompleteInput optionText="name" />
               </ReferenceInput>
-              <NumberInput source="flowRate" validate={required()} />
+              <NumberInput
+                label="Amount per minute"
+                source="flowRate"
+                validate={required()}
+              />
             </SimpleFormIterator>
           </ArrayInput>
           <ArrayInput source="outputs" defaultValue={[]}>
@@ -116,9 +121,13 @@ export const RecipeEdit: React.FC<EditProps> = (props) => {
                 reference="resources"
                 validate={required()}
               >
-                <SelectInput optionText="name" />
+                <AutocompleteInput optionText="name" />
               </ReferenceInput>
-              <NumberInput source="flowRate" validate={required()} />
+              <NumberInput
+                label="Amount per minute"
+                source="flowRate"
+                validate={required()}
+              />
             </SimpleFormIterator>
           </ArrayInput>
           <ReferenceInput
@@ -161,9 +170,13 @@ export const RecipeCreate: React.FC<CreateProps> = (props) => (
             reference="resources"
             validate={required()}
           >
-            <SelectInput optionText="name" />
+            <AutocompleteInput optionText="name" />
           </ReferenceInput>
-          <NumberInput source="flowRate" validate={required()} />
+          <NumberInput
+            label="Amount per minute"
+            source="flowRate"
+            validate={required()}
+          />
         </SimpleFormIterator>
       </ArrayInput>
       <ArrayInput source="outputs" defaultValue={[]}>
@@ -174,9 +187,13 @@ export const RecipeCreate: React.FC<CreateProps> = (props) => (
             reference="resources"
             validate={required()}
           >
-            <SelectInput optionText="name" />
+            <AutocompleteInput optionText="name" />
           </ReferenceInput>
-          <NumberInput source="flowRate" validate={required()} />
+          <NumberInput
+            label="Amount per minute"
+            source="flowRate"
+            validate={required()}
+          />
         </SimpleFormIterator>
       </ArrayInput>
       <ReferenceInput
