@@ -1,17 +1,10 @@
-import {
-  DataProvider,
-  Error as TSXError,
-  Loading,
-  useDataProvider,
-} from "react-admin";
-import { useState, useEffect } from "react";
-import { ReactFlowProvider } from "react-flow-renderer";
-import { DryRecipe, hydrateRecipe } from "../../persistence/DryRecipe";
-import { useLoadingStyles } from "./loadingStyles";
-import { Diagram } from "../graph/Diagram";
-import { buildingId, flowToEdge, flowToNode, Graph } from "../graph/Graph";
+import { useEffect, useState } from "react";
+import { DataProvider, Error as TSXError, useDataProvider } from "react-admin";
+import { Edge, Node } from "react-flow-renderer";
 import { Recipe } from "../../domain/Recipe";
-import { Node, Edge } from "react-flow-renderer";
+import { DryRecipe, hydrateRecipe } from "../../persistence/DryRecipe";
+import { buildingId, flowToEdge, flowToNode, Graph } from "../graph/Graph";
+import GraphField from "../graph/GraphField";
 
 async function buildGraph(dryRecipe: DryRecipe, dataProvider: DataProvider) {
   const recipe = await hydrateRecipe(dryRecipe, dataProvider);
@@ -42,38 +35,23 @@ export function recipeToGraph(recipe: Recipe) {
   );
 }
 
-const RecipeGraphInner: React.FC<{ dryRecipe?: DryRecipe }> = ({
-  dryRecipe,
-}) => {
-  const loadingClasses = useLoadingStyles();
+const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => {
   const dataProvider = useDataProvider();
   const [graph, setGraph] = useState<Graph>();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   useEffect(() => {
     if (dryRecipe) {
       buildGraph(dryRecipe, dataProvider)
         .then((newGraph) => {
           setGraph(newGraph);
-          setLoading(false);
         })
         .catch((error) => {
           setError(error);
-          setLoading(false);
         });
     }
   }, [dataProvider, dryRecipe]);
-
-  if (loading) return <Loading classes={loadingClasses} />;
   if (error) return <TSXError error={error} />;
-  if (!graph) return null;
-  return <Diagram graph={graph} />;
+  return <GraphField graph={graph} />;
 };
-
-const RecipeGraph: React.FC<{ dryRecipe?: DryRecipe }> = ({ dryRecipe }) => (
-  <ReactFlowProvider>
-    <RecipeGraphInner dryRecipe={dryRecipe} />
-  </ReactFlowProvider>
-);
 
 export default RecipeGraph;

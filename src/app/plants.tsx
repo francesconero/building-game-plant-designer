@@ -1,3 +1,4 @@
+import { camelCase } from "lodash";
 import * as React from "react";
 import {
   List,
@@ -13,10 +14,19 @@ import {
   ChipField,
   ChipFieldProps,
   FieldProps,
-  ReferenceArrayField,
+  CreateProps,
+  Create,
+  SimpleForm,
+  TextInput,
+  ArrayInput,
+  SimpleFormIterator,
+  ReferenceInput,
+  required,
+  NumberInput,
+  minLength,
+  AutocompleteInput,
 } from "react-admin";
 import { DryResourceFlow } from "./persistence/DryRecipe";
-import { makeStyles } from "@material-ui/core/styles";
 
 const PlantFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
   <Filter {...props}>
@@ -46,37 +56,56 @@ const ResourceFlowField: React.FC<
   </ReferenceField>
 );
 
-const useStyles = makeStyles(
-  (theme) => ({
-    link: {
-      color: theme.palette.primary.main,
-    },
-  }),
-  { name: "RaReferenceField" }
-);
-
 export const PlantList: React.FC<ListProps> = (props) => {
-  const classes = useStyles();
   return (
     <List {...props} filters={<PlantFilter />}>
       <Datagrid>
         <TextField source="id" />
         <TextField source="name" />
-        <ArrayField source="targetResources">
+        <ArrayField source="targetFlows">
           <SingleFieldList>
             <ResourceFlowField />
           </SingleFieldList>
         </ArrayField>
-        <ReferenceArrayField
-          label="Recipes"
-          reference="recipes"
-          source="recipes"
-        >
-          <SingleFieldList>
-            <ChipField className={classes.link} source="name" />
-          </SingleFieldList>
-        </ReferenceArrayField>
       </Datagrid>
     </List>
   );
 };
+
+export const PlantCreate: React.FC<CreateProps> = (props) => (
+  <Create
+    title="Create a Plant"
+    {...props}
+    transform={(data) =>
+      data.id ? data : { ...data, id: camelCase(data.name) }
+    }
+  >
+    <SimpleForm>
+      <TextInput source="id" />
+      <TextInput source="name" validate={required()} />
+      <ArrayInput
+        source="targetFlows"
+        validate={[
+          required(),
+          minLength(1, "You must require at least one target resource"),
+        ]}
+      >
+        <SimpleFormIterator>
+          <ReferenceInput
+            label="resource"
+            source="resource"
+            reference="resources"
+            validate={required()}
+          >
+            <AutocompleteInput optionText="name" />
+          </ReferenceInput>
+          <NumberInput
+            label="Amount per minute"
+            source="flowRate"
+            validate={required()}
+          />
+        </SimpleFormIterator>
+      </ArrayInput>
+    </SimpleForm>
+  </Create>
+);

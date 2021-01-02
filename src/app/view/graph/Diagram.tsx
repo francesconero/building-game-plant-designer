@@ -3,10 +3,11 @@ import ReactFlow, {
   Background,
   BackgroundVariant,
   useZoomPanHelper,
+  ReactFlowProvider,
 } from "react-flow-renderer";
 import { Graph } from "./Graph";
 
-export const Diagram: React.FC<{
+const InnerDiagram: React.FC<{
   graph: Graph;
 }> = ({ graph }) => {
   const { fitView } = useZoomPanHelper();
@@ -25,3 +26,11 @@ export const Diagram: React.FC<{
     </ReactFlow>
   );
 };
+
+export const Diagram: React.FC<{
+  graph: Graph;
+}> = ({ graph }) => (
+  <ReactFlowProvider>
+    <InnerDiagram graph={graph} />
+  </ReactFlowProvider>
+);

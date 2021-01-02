@@ -5,7 +5,8 @@ import { ResourceList, ResourceCreate, ResourceEdit } from "./app/resources";
 import { BuildingList, BuildingCreate, BuildingEdit } from "./app/buildings";
 import { RecipeCreate, RecipeEdit, RecipeList } from "./app/recipes";
 import Dashboard from "./app/Dashboard";
-import { PlantList } from "./app/plants";
+import { PlantList, PlantCreate } from "./app/plants";
+import theme from "./theme";
 
 const dataProvider = localStorageDataProviderExtended({
   defaultData: {},
@@ -15,7 +16,7 @@ const dataProvider = localStorageDataProviderExtended({
 });
 
 const App = () => (
-  <Admin dataProvider={dataProvider} dashboard={Dashboard}>
+  <Admin dataProvider={dataProvider} dashboard={Dashboard} theme={theme}>
     <Resource
       name="resources"
       list={ResourceList}
@@ -34,7 +35,7 @@ const App = () => (
       create={RecipeCreate}
       edit={RecipeEdit}
     />
-    <Resource name="plants" list={PlantList} />
+    <Resource name="plants" list={PlantList} create={PlantCreate} />
   </Admin>
 );
 

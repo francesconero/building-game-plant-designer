@@ -1,4 +1,3 @@
-import { useFormState } from "react-final-form";
 import {
   List,
   Datagrid,
@@ -15,7 +14,6 @@ import {
   CreateProps,
   ReferenceInput,
   ArrayField,
-  Edit,
   EditProps,
   ReferenceField,
   SingleFieldList,
@@ -24,16 +22,15 @@ import {
   FilterProps,
   TabbedForm,
   FormTab,
-  FieldProps,
 } from "react-admin";
 import _ from "lodash";
 import { DryRecipe } from "./persistence/DryRecipe";
-import { useLocation } from "react-router-dom";
 
 import { Filter, SearchInput } from "react-admin";
-import RecipeGraph from "./view/recipe/RecipeGraph";
-import { makeStyles } from "@material-ui/core/styles";
-import { Location } from "history";
+import ExtendedEdit from "./view/ui/ExtendedEdit";
+import { useActiveTab } from "./view/ui/useActiveTab";
+import LocationAwareFormTab from "./view/ui/LocationAwareFormTab";
+import GraphField from "./GraphField";
 
 const RecipeFilter: React.FC<Omit<FilterProps, "children">> = (props) => (
   <Filter {...props}>
@@ -83,73 +80,18 @@ const RecipeTitle: React.FC<RecipeTitleProps> = ({ record }) =>
     </span>
   ) : null;
 
-const GraphField: React.FC<FieldProps> = () => {
-  const dryRecipe = useFormState().values as DryRecipe | undefined;
-  return <RecipeGraph dryRecipe={dryRecipe} />;
-};
-
-const useStylesEdit = makeStyles(() => ({
-  root: {
-    display: "contents",
-  },
-  main: {
-    flexDirection: "column",
-    flex: 1,
-  },
-  card: {
-    flex: 1,
-    flexDirection: "column",
-    display: "flex",
-  },
-}));
-
-const useStylesForm = makeStyles(() => ({
-  form: {
-    display: "contents",
-  },
-  content: {
-    display: "flex",
-    flexDirection: "column",
-    flex: 1,
-  },
-}));
-
-const useStyles = makeStyles(() => ({
-  formTabContainer: {
-    display: "contents",
-  },
-  graphField: {
-    display: "contents",
-  },
-  form: {
-    display: "contents",
-  },
-}));
-
-function parseActiveTab(location: Location) {
-  const parts = location.pathname.split("/");
-  return parts[3];
-}
-
 export const RecipeEdit: React.FC<EditProps> = (props) => {
-  const location = useLocation();
-  const customClasses = useStyles();
-  const editClasses = useStylesEdit();
-  const tabbedFormClasses = useStylesForm();
-  const activeTab = parseActiveTab(location);
+  const activeTab = useActiveTab();
   return (
-    <Edit
-      classes={activeTab === "design" ? editClasses : null}
+    <ExtendedEdit
+      fullHeight={activeTab === "design"}
       title={<RecipeTitle />}
       {...props}
       transform={(data) =>
         data.id ? data : { ...data, id: _.camelCase(data.name) }
       }
     >
-      <TabbedForm
-        className={activeTab === "design" ? customClasses.form : undefined}
-        classes={activeTab === "design" ? tabbedFormClasses : null}
-      >
+      <TabbedForm>
         <FormTab label="Properties">
           <TextInput source="id" />
           <TextInput source="name" validate={required()} />
@@ -188,20 +130,15 @@ export const RecipeEdit: React.FC<EditProps> = (props) => {
             <SelectInput optionText="name" />
           </ReferenceInput>
         </FormTab>
-        <FormTab
-          contentClassName={customClasses.formTabContainer}
+        <LocationAwareFormTab
           label="Design"
           path="design"
+          renderIfNotVisible={false}
         >
-          {activeTab === "design" ? (
-            <GraphField
-              formClassName={customClasses.graphField}
-              source="design"
-            />
-          ) : undefined}
-        </FormTab>
+          <GraphField source="design" />
+        </LocationAwareFormTab>
       </TabbedForm>
-    </Edit>
+    </ExtendedEdit>
   );
 };
 
