@@ -1,5 +1,12 @@
-import { defaultTheme } from "react-admin";
 import merge from "lodash/merge";
+import { createMuiTheme } from "@material-ui/core/styles";
+
+const defaultTheme = createMuiTheme({
+  palette: {
+    type: "dark",
+  },
+});
+
 const theme = merge({}, defaultTheme, {
   overrides: {
     RaTabbedForm: {
@@ -20,6 +27,16 @@ const theme = merge({}, defaultTheme, {
     RaInput: {
       root: {
         backgroundColor: "red",
+      },
+    },
+    RaLink: {
+      link: {
+        color: defaultTheme.palette.text.primary,
+      },
+    },
+    RaReferenceField: {
+      link: {
+        color: defaultTheme.palette.text.primary,
       },
     },
   },
