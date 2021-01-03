@@ -65,7 +65,7 @@ function toDryResourceFlows(
   });
 }
 
-type DB = {
+export type DB = {
   resources: DryResource[];
   buildings: DryBuilding[];
   recipes: DryRecipe[];
